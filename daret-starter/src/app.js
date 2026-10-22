@@ -132,19 +132,58 @@ btnAjouterParticipant.addEventListener('click', function() {
 
     mettreAJourCompteur();
 });
+
 participantsListe.addEventListener('click', function(event) {
     if (event.target.classList.contains('btn-retirer')) {
+       
+        const nbActuel = participantsListe.querySelectorAll('input').length;
+        
+        if (nbActuel <= 2) {
+           
+            participantsErreur.textContent = "Il faut au moins 2 participants pour un Daret !";
+            participantsErreur.classList.remove('hidden');
+            return; 
+        }
+
+        participantsErreur.classList.add('hidden');
         event.target.parentElement.remove();
         mettreAJourCompteur();
+    }
+});
+
+
+participantsListe.addEventListener('input', function(event) {
+
+    if (event.target.tagName === 'INPUT') {
+     
+        const regexParticipant = /^[a-zA-ZÀ-ÿ0-9 \-]{2,30}$/;
+        const valeur = event.target.value.trim();
+
+        if (valeur !== "" && !regexParticipant.test(valeur)) {
+      
+            event.target.classList.remove('border-daret-bordure', 'focus:outline-daret-vert');
+            event.target.classList.add('border-red-500', 'focus:outline-red-500');
+            event.target.setAttribute('aria-invalid', 'true');
+            
+            participantsErreur.textContent = "Le prénom doit contenir entre 2 et 30 caractères (lettres ou chiffres valides).";
+            participantsErreur.classList.remove('hidden');
+        } else {
+           
+            event.target.classList.remove('border-red-500', 'focus:outline-red-500');
+            event.target.classList.add('border-daret-bordure', 'focus:outline-daret-vert');
+            event.target.removeAttribute('aria-invalid');
+            
+            participantsErreur.classList.add('hidden');
+        }
     }
 });
 function calculerdaretcotisation(cotisation, nbActuel) {
     return cotisation * nbActuel;
 }
 
-function calculerDateFin(dateDebut, periodicite, nbTours) {
+function calculerDateTour(dateDebut, periodicite, indexTour) {
     let date = new Date(dateDebut);
-    for (let i = 1; i < nbTours; i++) {
+    for (let i = 0; i < indexTour; i++) {
         if (periodicite === "hebdomadaire") {
             date.setDate(date.getDate() + 7);
         } else if (periodicite === "quinzaine") {
@@ -175,7 +214,7 @@ formDaret.addEventListener('submit', function(event) {
     }
 
     const montantGlobal = calculerdaretcotisation(cotisation, nbParticipants);
-    const dateFin = calculerDateFin(dateDebut, periodicite, nbParticipants);
+    const dateFin = calculerDateTour(dateDebut, periodicite, nbParticipants - 1);
 
     const optionsDate = { day: 'numeric', month: 'long', year: 'numeric' };
     const texteDateDebut = new Date(dateDebut).toLocaleDateString('fr-FR', optionsDate);
@@ -188,4 +227,47 @@ formDaret.addEventListener('submit', function(event) {
 
     document.getElementById('etat-vide').classList.add('hidden');
     document.getElementById('contenu-resultat').classList.remove('hidden');
+
+    const tbodyCalendrier = document.getElementById('calendrier-corps');
+  
+    tbodyCalendrier.textContent = ''; 
+
+    const inputsParticipants = participantsListe.querySelectorAll('input');
+
+    inputsParticipants.forEach(function(input, index) {
+        let nom = input.value.trim();
+        if (nom === "") {
+            nom = `Participant ${index + 1}`; 
+        }
+
+        const dateTour = calculerDateTour(dateDebut, periodicite, index);
+        const texteDateTour = dateTour.toLocaleDateString('fr-FR', optionsDate);
+
+        const tr = document.createElement('tr');
+        tr.classList.add('border-b', 'border-daret-bordure'); 
+
+        const tdTour = document.createElement('td');
+        tdTour.classList.add('py-3', 'px-4');
+        tdTour.textContent = `Tour ${index + 1}`;
+
+        const tdNom = document.createElement('td');
+        tdNom.classList.add('py-3', 'px-4', 'font-medium');
+        tdNom.textContent = nom;
+
+        const tdDate = document.createElement('td');
+        tdDate.classList.add('py-3', 'px-4');
+        tdDate.textContent = texteDateTour;
+
+        const tdMontant = document.createElement('td');
+        tdMontant.classList.add('py-3', 'px-4', 'text-daret-vert', 'font-bold');
+        tdMontant.textContent = `${montantGlobal} MAD`;
+
+        tr.appendChild(tdTour);
+        tr.appendChild(tdNom);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdMontant);
+        
+        tbodyCalendrier.appendChild(tr);
+    });
 });
+
