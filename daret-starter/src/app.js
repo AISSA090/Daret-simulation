@@ -98,3 +98,43 @@ periodiciteSelect.addEventListener('change', function() {
     }
 });
 
+btnAjouterParticipant.addEventListener('click', function() {
+   
+    const nbActuel = participantsListe.querySelectorAll('input').length;
+
+    if (nbActuel >= 20) {
+        return; 
+    }
+    const li = document.createElement('li');
+    li.classList.add('flex', 'gap-2', 'items-center'); 
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Prénom du participant';
+    input.classList.add('w-full', 'rounded', 'border', 'border-daret-bordure', 'px-3', 'py-2', 'focus:outline-2', 'focus:outline-offset-2', 'focus:outline-daret-vert');
+
+    const btnRetirer = document.createElement('button');
+
+    btnRetirer.type = 'button';
+    btnRetirer.textContent = 'X';
+    btnRetirer.classList.add('btn-retirer', 'shrink-0', 'border-daret-bordure', 'px-3', 'py-2', 'text-black', 'font-medium', 'hover:bg-daret-fond');
+    li.appendChild(input);
+    li.appendChild(btnRetirer);
+    participantsListe.appendChild(li);
+});
+btnAjouterParticipant.click();
+btnAjouterParticipant.click();
+btnAjouterParticipant.click();
+participantsListe.addEventListener('click', function(event) {
+
+    if (event.target.classList.contains('btn-retirer')) {
+        const nbActuel = participantsListe.querySelectorAll('input').length;
+    
+        if (nbActuel <= 2) {
+            participantsErreur.textContent=" au moins 2 participants !";
+            participantsErreur.classList.remove('hidden')
+            return; 
+        }
+        event.target.parentElement.remove();
+    }
+});
