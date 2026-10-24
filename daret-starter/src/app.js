@@ -345,7 +345,7 @@ tableauInteractif.addEventListener('click', function(event) {
         document.getElementById('detail-montant').textContent = montant;
 
         const ulContributeurs = document.getElementById('detail-contributeurs');
-        ulContributeurs.innerHTML = ''; 
+        ulContributeurs.textContent = ''; 
         
         autresCotisants.forEach(cotisant => {
             const li = document.createElement('li');
