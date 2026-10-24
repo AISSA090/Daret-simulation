@@ -305,9 +305,11 @@ if (btnOrdre) {
 
 const tableauInteractif = document.getElementById('calendrier-corps');
 tableauInteractif.addEventListener('click', function(event) {
+    
     if (event.target.getAttribute('data-action') === 'basculer-statut') {
         const bouton = event.target;
         const ligne = bouton.closest('tr');
+        
         if (bouton.textContent === 'À venir') {
             bouton.textContent = 'Terminé';
             bouton.classList.add('bg-daret-vert', 'text-white');
@@ -319,22 +321,44 @@ tableauInteractif.addEventListener('click', function(event) {
             bouton.classList.add('hover:bg-daret-fond');
             ligne.classList.remove('opacity-50');
         }
+        
+        let nombredetourteminer = tableauInteractif.querySelectorAll('.bg-daret-vert').length;
+        const counter = document.getElementById('compteur-tours');
+        const nbActuel = nomsOriginaux.length; 
+        counter.textContent = `${nombredetourteminer} tours terminés sur ${nbActuel}`;
+        counter.setAttribute('aria-live','polite');
     }
-    let nombredetourteminer=tableauInteractif.querySelectorAll('.bg-daret-vert').length
-    const    counter=document.getElementById('compteur-tours');
-    const nbActuel=participantsListe.querySelectorAll('input').length;
-    counter.textContent = `${nombredetourteminer} tours terminés sur ${nbActuel}`;
-    counter.setAttribute('aria-live','polite')
 
     if (event.target.getAttribute('data-action') === 'ouvrir-detail') {
         const bouton = event.target;
         const ligne = bouton.closest('tr');
         const numTour = ligne.getAttribute('data-tour');
-        const nomPersonne = bouton.textContent;
+        const nomPersonne = bouton.textContent.trim();
         const montant = document.getElementById('resume-cagnotte').textContent;
-        alert(`Détails du Tour n°${numTour}\nBénéficiaire : ${nomPersonne}\nMontant à recevoir : ${montant}`);
+        const dateTour = ligne.cells[1].textContent;
+
+        const autresCotisants = nomsOriginaux.filter(nom => nom !== nomPersonne);
+
+        document.getElementById('detail-titre').textContent = `Tour n°${numTour}`;
+        document.getElementById('detail-date').textContent = dateTour;
+        document.getElementById('detail-beneficiaire').textContent = nomPersonne;
+        document.getElementById('detail-montant').textContent = montant;
+
+        const ulContributeurs = document.getElementById('detail-contributeurs');
+        ulContributeurs.innerHTML = ''; 
+        
+        autresCotisants.forEach(cotisant => {
+            const li = document.createElement('li');
+            li.textContent = cotisant;
+            ulContributeurs.appendChild(li);
+        });
+
+        const modal = document.getElementById('detail-tour');
+        modal.showModal();
+
+        document.getElementById('detail-fermer').onclick = function() {
+            modal.close();
+            bouton.focus(); 
+        };
     }
 });
-
-  
- 
