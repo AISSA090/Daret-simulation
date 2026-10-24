@@ -120,6 +120,9 @@ btnAjouterParticipant.addEventListener('click', function() {
     participantsListe.appendChild(li);
     mettreAJourCompteur();
 });
+btnAjouterParticipant.click();
+btnAjouterParticipant.click();
+btnAjouterParticipant.click();
 
 participantsListe.addEventListener('click', function(event) {
     if (event.target.classList.contains('btn-retirer')) {
@@ -238,7 +241,6 @@ function genererTableauCalendrier(listeNoms) {
         tdDate.classList.add('py-3', 'px-4');
         tdDate.textContent = texteDateTour;
 
-        // BOUTON NOM (Détails)
         const tdNom = document.createElement('td');
         tdNom.classList.add('py-3', 'px-4', 'font-medium');
         const btnDetail = document.createElement('button');
@@ -258,7 +260,7 @@ function genererTableauCalendrier(listeNoms) {
         btnStatut.type = 'button';
         btnStatut.setAttribute('data-action', 'basculer-statut');
         btnStatut.classList.add('px-3', 'py-1', 'border', 'border-daret-bordure', 'rounded', 'text-sm', 'hover:bg-daret-fond');
-        btnStatut.textContent = 'En attente';
+        btnStatut.textContent = 'À venir';
         tdStatut.appendChild(btnStatut);
 
         tr.appendChild(tdTour);
@@ -306,18 +308,24 @@ tableauInteractif.addEventListener('click', function(event) {
     if (event.target.getAttribute('data-action') === 'basculer-statut') {
         const bouton = event.target;
         const ligne = bouton.closest('tr');
-        if (bouton.textContent === 'En attente') {
+        if (bouton.textContent === 'À venir') {
             bouton.textContent = 'Terminé';
             bouton.classList.add('bg-daret-vert', 'text-white');
             bouton.classList.remove('hover:bg-daret-fond');
             ligne.classList.add('opacity-50'); 
         } else {
-            bouton.textContent = 'En attente';
+            bouton.textContent = 'À venir';
             bouton.classList.remove('bg-daret-vert', 'text-white');
             bouton.classList.add('hover:bg-daret-fond');
             ligne.classList.remove('opacity-50');
         }
     }
+    let nombredetourteminer=tableauInteractif.querySelectorAll('.bg-daret-vert').length
+    const    counter=document.getElementById('compteur-tours');
+    const nbActuel=participantsListe.querySelectorAll('input').length;
+    counter.textContent = `${nombredetourteminer} tours terminés sur ${nbActuel}`;
+    counter.setAttribute('aria-live','polite')
+
     if (event.target.getAttribute('data-action') === 'ouvrir-detail') {
         const bouton = event.target;
         const ligne = bouton.closest('tr');
@@ -327,3 +335,6 @@ tableauInteractif.addEventListener('click', function(event) {
         alert(`Détails du Tour n°${numTour}\nBénéficiaire : ${nomPersonne}\nMontant à recevoir : ${montant}`);
     }
 });
+
+  
+ 
