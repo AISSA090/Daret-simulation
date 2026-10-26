@@ -233,7 +233,7 @@ function genererTableauCalendrier(listeNoms) {
         tr.classList.add('border-b', 'border-daret-bordure'); 
         tr.setAttribute('data-tour', index + 1);
 
-        const tdTour = document.createElement('td');
+        const tdTour = document.createElement('td'  );
         tdTour.classList.add('py-3', 'px-4');
         tdTour.textContent = `Tour ${index + 1}`;
 
@@ -345,7 +345,7 @@ tableauInteractif.addEventListener('click', function(event) {
         document.getElementById('detail-montant').textContent = montant;
 
         const ulContributeurs = document.getElementById('detail-contributeurs');
-        ulContributeurs.innerHTML = ''; 
+        ulContributeurs.textContent = ''; 
         
         autresCotisants.forEach(cotisant => {
             const li = document.createElement('li');
@@ -361,4 +361,16 @@ tableauInteractif.addEventListener('click', function(event) {
             bouton.focus(); 
         };
     }
+});
+        const btnreinstaliser=document.getElementById('reinitialiser')
+btnreinstaliser.addEventListener('click',function(){
+    formDaret.reset();
+    nomsOriginaux = [];
+        participantsListe.textContent="";
+        btnAjouterParticipant.click();
+        btnAjouterParticipant.click();  
+    btnAjouterParticipant.click();
+    document.getElementById('calendrier-corps').textContent="";
+    document.getElementById('contenu-resultat').classList.add('hidden');
+    document.getElementById('etat-vide').classList.remove('hidden');
 });
